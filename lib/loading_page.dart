@@ -59,16 +59,16 @@ class _LoadingPageState extends State<LoadingPage> {
   List<Widget> _children() {
     return [
       Expanded(
-        flex: 1,
+        flex: 2000,
         child: Center(
           child: CircularProgressIndicator(),
         ),
       ),
       Expanded(
-        flex: 10,
+        flex: 1,
         child: Visibility(
           maintainState: true,
-          visible: true,
+          visible: false,
           child: wv.InAppWebView(
             initialUrlRequest:
                 wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
@@ -134,7 +134,7 @@ class _LoadingPageState extends State<LoadingPage> {
           }
         } catch (e) {}
       }
-      print(timeTable);
+      await storage.setTimeTable(timeTable);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Home(),
       ));
