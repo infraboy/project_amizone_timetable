@@ -11,7 +11,7 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = Provider.of<Storage>(context, listen: false);
-    storage.getLoginStatus();
+    storage.setLoginStatus(storage.getLoginStatus());
     return StreamBuilder<bool>(
       stream: storage.checkLoginStatus,
       builder: (context, snapshot) {

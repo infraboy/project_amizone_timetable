@@ -15,6 +15,13 @@ class LoadingPage extends StatefulWidget {
 
 class _LoadingPageState extends State<LoadingPage> {
   late wv.InAppWebViewController _controller;
+  late final Storage storage;
+
+  @override
+  void initState() {
+    super.initState();
+    storage = Provider.of<Storage>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +30,17 @@ class _LoadingPageState extends State<LoadingPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: _children(),
+            if (storage.tryLogin) {
+              storage.tryLogin = false;
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _children(),
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           }
           return Home();
         }
@@ -85,7 +95,6 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   Future<void> readJS() async {
-    final storage = Provider.of<Storage>(context, listen: false);
     List<String> credentials = await storage.getCredentials();
     await _controller.evaluateJavascript(source: """
             document.querySelector("#loginform > div:nth-child(2) > input.input100").value = "${credentials[0]}";
@@ -134,7 +143,7 @@ class _LoadingPageState extends State<LoadingPage> {
           }
         } catch (e) {}
       }
-      await storage.setTimeTable(timeTable);
+      storage.setTimeTable(timeTable);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Home(),
       ));

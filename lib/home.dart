@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
   int selectedDay = DateTime.now().weekday - 1;
   late final List<String> daysOrderedList;
   late final Storage storage;
-  late final Future<Map<String, List<List<String>>>> schedule;
+  late final Map<String, List<List<String>>> schedule;
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
               ),
             ),
             onPressed: () async {
-              await storage.setLoginStatus(false);
+              storage.setLoginStatus(false);
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               }
@@ -74,54 +74,42 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
-      body: FutureBuilder<Map<String, List<List<String>>>>(
-        future: schedule,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data![daysOrderedList[(selectedDay)]]!.length,
-              itemBuilder: (context, index) {
-                return Column(
+      body: ListView.builder(
+        itemCount: schedule[daysOrderedList[(selectedDay)]]!.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              ListTile(
+                leading:
+                    Text(schedule[daysOrderedList[selectedDay]]![index][0]),
+                title: Column(
                   children: [
-                    ListTile(
-                      leading: Text(snapshot
-                          .data![daysOrderedList[selectedDay]]![index][0]),
-                      title: Column(
-                        children: [
-                          Text(
-                            snapshot.data![daysOrderedList[selectedDay]]![index]
-                                [1],
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            snapshot.data![daysOrderedList[selectedDay]]![index]
-                                [3],
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            snapshot.data![daysOrderedList[selectedDay]]![index]
-                                [2],
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      schedule[daysOrderedList[selectedDay]]![index][1],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Divider(
-                      thickness: 2,
-                    )
+                    Text(
+                      schedule[daysOrderedList[selectedDay]]![index][3],
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      schedule[daysOrderedList[selectedDay]]![index][2],
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
-                );
-              },
-            );
-          }
-          return Center(
-            child: CircularProgressIndicator(),
+                ),
+              ),
+              Divider(
+                thickness: 2,
+              )
+            ],
           );
         },
       ),

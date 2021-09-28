@@ -45,10 +45,11 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: ElevatedButton(
                 child: Text("Submit"),
-                onPressed: () async {
-                  await storage.setCredentials(
+                onPressed: () {
+                  storage.setCredentials(
                       _formNumberController.text, _passwordController.text);
-                  await storage.setLoginStatus(true);
+                  storage.tryLogin = true;
+                  storage.setLoginStatus(true);
                 },
               ),
             ),
