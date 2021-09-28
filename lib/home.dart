@@ -37,81 +37,137 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Scam Schedule"),
-        actions: [
-          TextButton(
-            child: Text(
-              "Logout",
-              style: TextStyle(
-                color: Colors.white,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Scam Schedule"),
+          actions: [
+            TextButton(
+              child: Text(
+                "Logout",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
-            ),
-            onPressed: () async {
-              storage.setLoginStatus(false);
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView.builder(
-          itemCount: daysOrderedList.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(daysOrderedList[index]),
-              selected: index == selectedDay ? true : false,
-              onTap: () {
-                setState(() {
-                  selectedDay = index;
-                });
-                Navigator.of(context).pop();
+              onPressed: () async {
+                storage.setLoginStatus(false);
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
               },
-            );
-          },
+            ),
+          ],
         ),
-      ),
-      body: ListView.builder(
-        itemCount: schedule[daysOrderedList[(selectedDay)]]!.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              ListTile(
-                leading:
-                    Text(schedule[daysOrderedList[selectedDay]]![index][0]),
-                title: Column(
+        drawer: Theme(
+          data: Theme.of(context).copyWith(
+            canvasColor: Colors.blue[900],
+          ),
+          child: Drawer(
+            child: ListView.builder(
+              itemCount: daysOrderedList.length,
+              itemBuilder: (context, index) {
+                bool select = index == selectedDay;
+                return Column(
                   children: [
-                    Text(
-                      schedule[daysOrderedList[selectedDay]]![index][1],
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    ListTile(
+                      selectedTileColor: Colors.white,
+                      tileColor: Colors.blue[900],
+                      title: Text(
+                        daysOrderedList[index],
+                        style: TextStyle(
+                          fontSize: select ? 16 : 14,
+                          fontWeight:
+                              select ? FontWeight.bold : FontWeight.normal,
+                          color: select ? Colors.blue[900] : Colors.white,
+                        ),
                       ),
+                      selected: select ? true : false,
+                      onTap: () {
+                        setState(() {
+                          selectedDay = index;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    Divider(
+                      color: Colors.white,
+                      height: 0,
+                      thickness: 2,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+        body: schedule[daysOrderedList[(selectedDay)]]!.length == 0
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      child: Image.asset("images/cat.png"),
                     ),
                     Text(
-                      schedule[daysOrderedList[selectedDay]]![index][3],
+                      "No scams today, cazz",
                       style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Text(
-                      schedule[daysOrderedList[selectedDay]]![index][2],
-                      style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 18,
+                        color: Colors.grey,
                       ),
                     ),
                   ],
                 ),
-              ),
-              Divider(
-                thickness: 2,
               )
-            ],
-          );
-        },
+            : ListView.builder(
+                itemCount: schedule[daysOrderedList[(selectedDay)]]!.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        isThreeLine: true,
+                        leading: Text(
+                          schedule[daysOrderedList[selectedDay]]![index][0],
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        title: Center(
+                          child: Text(
+                            schedule[daysOrderedList[selectedDay]]![index][1],
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[900],
+                            ),
+                          ),
+                        ),
+                        subtitle: Column(
+                          children: [
+                            Text(
+                              schedule[daysOrderedList[selectedDay]]![index][3],
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              schedule[daysOrderedList[selectedDay]]![index][2],
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(
+                        height: 0,
+                        thickness: 2,
+                      )
+                    ],
+                  );
+                },
+              ),
       ),
     );
   }

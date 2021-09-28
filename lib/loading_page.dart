@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as wv;
@@ -16,11 +17,18 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   late wv.InAppWebViewController _controller;
   late final Storage storage;
+  String? error;
+  late final Timer timer;
 
   @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
+    timer = Timer(Duration(minutes: 2), () {
+      storage.error =
+          "Timeout, ScAmizone took more time than expected😭, some error might've occurred!";
+      storage.setLoginStatus(false);
+    });
   }
 
   @override
@@ -42,8 +50,10 @@ class _LoadingPageState extends State<LoadingPage> {
               );
             }
           }
+          timer.cancel();
           return Home();
         }
+        timer.cancel();
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
@@ -95,7 +105,7 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   Future<void> readJS() async {
-    List<String> credentials = await storage.getCredentials();
+    List<String> credentials = storage.getCredentials();
     await _controller.evaluateJavascript(source: """
             document.querySelector("#loginform > div:nth-child(2) > input.input100").value = "${credentials[0]}";
             document.querySelector("#loginform > div:nth-child(3) > input").value = "${credentials[1]}";
@@ -144,10 +154,22 @@ class _LoadingPageState extends State<LoadingPage> {
         } catch (e) {}
       }
       storage.setTimeTable(timeTable);
+      timer.cancel();
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => Home(),
       ));
     }
-    // TODO add login validation somehow
+    try {
+      String validate = await _controller.evaluateJavascript(
+          source:
+              """document.querySelector("#loginform > div.text-danger").textContent""");
+      if (validate == "Please check your credential !!") {
+        storage.error = "Please check your credential !!";
+        timer.cancel();
+        storage.setLoginStatus(false);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

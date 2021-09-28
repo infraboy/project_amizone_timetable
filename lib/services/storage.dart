@@ -7,6 +7,7 @@ class Storage {
   StreamController<bool> _loginStatus = StreamController<bool>();
   Stream<bool> get checkLoginStatus => _loginStatus.stream;
   bool tryLogin = false;
+  String? error;
   List<String> _days = [
     "Sunday",
     "Monday",

@@ -12,6 +12,9 @@ void main() async {
     child: MaterialApp(
       title: "Scam Schedule",
       home: LandingPage(),
+      theme: ThemeData(
+        primaryColor: Colors.blue[900],
+      ),
     ),
   ));
 }

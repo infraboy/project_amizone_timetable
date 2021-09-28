@@ -12,16 +12,31 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _formNumberController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  late final Storage storage;
+
+  @override
+  void initState() {
+    super.initState();
+    storage = Provider.of<Storage>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final storage = Provider.of<Storage>(context, listen: false);
     return Scaffold(
       body: Center(
         child: ListView(
           padding: EdgeInsets.all(20),
           shrinkWrap: true,
           children: [
+            Center(
+              child: SizedBox(
+                height: 150,
+                child: Image.asset("images/scamity.png"),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
             TextField(
               controller: _formNumberController,
               decoration: InputDecoration(
@@ -45,14 +60,31 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: ElevatedButton(
                 child: Text("Submit"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue[900],
+                ),
                 onPressed: () {
                   storage.setCredentials(
                       _formNumberController.text, _passwordController.text);
                   storage.tryLogin = true;
+                  storage.error = null;
                   storage.setLoginStatus(true);
                 },
               ),
             ),
+            if (storage.error != null) ...[
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Text(
+                  storage.error!,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
