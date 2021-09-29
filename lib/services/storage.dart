@@ -34,8 +34,13 @@ class Storage {
 
   List<String> getCredentials() {
     List<String> credentials = [];
-    credentials.add(instance.getString("formNo")!);
-    credentials.add(instance.getString("password")!);
+    try {
+      credentials.add(instance.getString("formNo")!);
+      credentials.add(instance.getString("password")!);
+    } catch (e) {
+      credentials.add("");
+      credentials.add("");
+    }
     return credentials;
   }
 

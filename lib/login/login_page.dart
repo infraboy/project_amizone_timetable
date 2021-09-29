@@ -10,14 +10,19 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _formNumberController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  late TextEditingController _formNumberController;
+  late TextEditingController _passwordController;
   late final Storage storage;
+
+  FocusNode _passwordFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
+    final credentials = storage.getCredentials();
+    _formNumberController = TextEditingController(text: credentials[0]);
+    _passwordController = TextEditingController(text: credentials[1]);
   }
 
   @override
@@ -43,16 +48,26 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: "Form Number",
               ),
               keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+              onEditingComplete: () {
+                _passwordFocus.requestFocus();
+              },
             ),
             SizedBox(
               height: 10,
             ),
             TextField(
+              focusNode: _passwordFocus,
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: "Password",
               ),
               obscureText: true,
+              textInputAction: TextInputAction.done,
+              onEditingComplete: () {
+                _passwordFocus.unfocus();
+                submit();
+              },
             ),
             SizedBox(
               height: 10,
@@ -63,13 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: ElevatedButton.styleFrom(
                   primary: Colors.blue[900],
                 ),
-                onPressed: () {
-                  storage.setCredentials(
-                      _formNumberController.text, _passwordController.text);
-                  storage.tryLogin = true;
-                  storage.error = null;
-                  storage.setLoginStatus(true);
-                },
+                onPressed: submit,
               ),
             ),
             if (storage.error != null) ...[
@@ -89,5 +98,13 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void submit() {
+    storage.setCredentials(
+        _formNumberController.text, _passwordController.text);
+    storage.tryLogin = true;
+    storage.error = null;
+    storage.setLoginStatus(true);
   }
 }

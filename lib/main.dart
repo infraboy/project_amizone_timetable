@@ -10,7 +10,7 @@ void main() async {
   runApp(Provider<Storage>(
     create: (_) => Storage(instance: instance),
     child: MaterialApp(
-      title: "Scam Schedule",
+      title: "ScAmizone Schedule",
       home: LandingPage(),
       theme: ThemeData(
         primaryColor: Colors.blue[900],

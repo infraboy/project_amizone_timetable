@@ -2,8 +2,8 @@
     package="com.example.project_amizone_timetable">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="project_amizone_timetable"
-        android:icon="@mipmap/ic_launcher">
+        android:label="ScAmizone Schedule"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
