@@ -103,8 +103,7 @@ class _LoginPageState extends State<LoginPage> {
   void submit() {
     storage.setCredentials(
         _formNumberController.text, _passwordController.text);
-    storage.tryLogin = true;
     storage.error = null;
-    storage.setLoginStatus(true);
+    storage.setLoadingStatus(true);
   }
 }

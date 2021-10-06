@@ -6,7 +6,8 @@ class Storage {
   final SharedPreferences instance;
   StreamController<bool> _loginStatus = StreamController<bool>();
   Stream<bool> get checkLoginStatus => _loginStatus.stream;
-  bool tryLogin = false;
+  StreamController<bool> _loadingController = StreamController<bool>();
+  Stream<bool> get isLoading => _loadingController.stream;
   String? error;
   List<String> _days = [
     "Sunday",
@@ -17,6 +18,10 @@ class Storage {
     "Friday",
     "Saturday"
   ];
+
+  void setLoadingStatus(bool status) {
+    _loadingController.add(status);
+  }
 
   bool getLoginStatus() {
     return instance.getBool("loginStatus") ?? false;
