@@ -17,23 +17,30 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   late final Storage storage;
   String? error;
-  late final Timer timer;
+  // late final Timer timer;
   late wv.InAppWebViewController _controller;
 
   @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
-    timer = Timer(Duration(minutes: 1), () {
-      storage.error =
-          "Timeout, ScAmizone took more time than expected😭, some error might've occurred!";
-      storage.setLoginStatus(false);
-    });
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => Navigator.push(
+    //TODO implement timer
+    // timer = Timer(Duration(minutes: 1), () {
+    //           storage.error =
+    //               "Timeout, ScAmizone took more time than expected😭, some error might've occurred!";
+    //           storage.setLoginStatus(false);
+    //         });
+    //TODO show different error if logged in and could not reload
+    WidgetsBinding.instance!.addPostFrameCallback(
+      (timeStamp) => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => LandingPage(),
-        )));
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              LandingPage(),
+          transitionDuration: Duration(seconds: 0),
+        ),
+      ),
+    );
   }
 
   @override
@@ -55,7 +62,7 @@ class _LoadingPageState extends State<LoadingPage> {
               },
             );
           } else {
-            storage.error = "No internet connection";
+            storage.isOnline = false;
             storage.setLoadingStatus(false);
           }
         }
@@ -68,7 +75,7 @@ class _LoadingPageState extends State<LoadingPage> {
     return Scaffold(
       body: Visibility(
         maintainState: true,
-        visible: false,
+        visible: true,
         child: wv.InAppWebView(
           initialUrlRequest:
               wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
@@ -146,17 +153,30 @@ class _LoadingPageState extends State<LoadingPage> {
         } catch (e) {}
       }
       storage.setTimeTable(timeTable);
-      storage.setLoginStatus(true);
+      if (!storage.getLoginStatus()) storage.setLoginStatus(true);
       storage.setLoadingStatus(false);
-      timer.cancel();
+      // timer.cancel();
     }
     try {
       String validate = await _controller.evaluateJavascript(
           source:
               """document.querySelector("#loginform > div.text-danger").textContent""");
-      if (validate == "Please check your credential !!") {
-        storage.error = "Please check your credential !!";
-        timer.cancel();
+      if (validate.isNotEmpty) {
+        // timer.cancel();
+        storage.setLoadingStatus(false);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Error Logging In"),
+            content: Text(validate),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              )
+            ],
+          ),
+        );
         storage.setLoadingStatus(false);
       }
     } catch (e) {

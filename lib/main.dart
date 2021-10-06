@@ -9,12 +9,10 @@ void main() async {
   SharedPreferences instance = await SharedPreferences.getInstance();
   runApp(Provider<Storage>(
     create: (_) => Storage(instance: instance),
+    dispose: (context, object) async => object.dispose(),
     child: MaterialApp(
       title: "ScAmizone Schedule",
       home: LoadingPage(),
-      theme: ThemeData(
-        primaryColor: Colors.blue[900],
-      ),
     ),
   ));
 }

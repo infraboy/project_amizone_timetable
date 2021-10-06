@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:project_amizone_timetable/home.dart';
 import 'package:project_amizone_timetable/login/login_page.dart';
 import 'package:project_amizone_timetable/services/storage.dart';
 import 'package:provider/provider.dart';
-
-import 'loading_page.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -17,7 +16,7 @@ class LandingPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!) {
-            return LoadingPage();
+            return Home();
           }
           return LoginPage();
         } else if (snapshot.hasError) {

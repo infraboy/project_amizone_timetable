@@ -6,9 +6,11 @@ class Storage {
   final SharedPreferences instance;
   StreamController<bool> _loginStatus = StreamController<bool>();
   Stream<bool> get checkLoginStatus => _loginStatus.stream;
-  StreamController<bool> _loadingController = StreamController<bool>();
+  StreamController<bool> _loadingController =
+      StreamController<bool>.broadcast();
   Stream<bool> get isLoading => _loadingController.stream;
-  String? error;
+  bool? loading;
+  bool isOnline = true;
   List<String> _days = [
     "Sunday",
     "Monday",
@@ -19,8 +21,14 @@ class Storage {
     "Saturday"
   ];
 
+  Future<void> dispose() async {
+    await _loginStatus.close();
+    await _loadingController.close();
+  }
+
   void setLoadingStatus(bool status) {
     _loadingController.add(status);
+    loading = status;
   }
 
   bool getLoginStatus() {
