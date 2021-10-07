@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Your device is currently offline, please turn on your internet connection and restart the app."),
+                                  "Your device is currently offline, reload failed."),
                               action: SnackBarAction(
                                 label: "OK",
                                 onPressed: () {
