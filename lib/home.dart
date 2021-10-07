@@ -170,7 +170,8 @@ class _HomeState extends State<Home> {
                                     DateTime.now().minute;
                                 int classStartTime =
                                     int.parse(classTime.substring(0, 2)) * 60 +
-                                        int.parse(classTime.substring(3, 5));
+                                        int.parse(classTime.substring(3, 5)) -
+                                        5;
                                 int classEndTime =
                                     int.parse(classTime.substring(10, 12)) *
                                             60 +
@@ -178,7 +179,7 @@ class _HomeState extends State<Home> {
                                 bool isSelected;
                                 if (days[DateTime.now().weekday - 1] ==
                                     daysOrderedList[selectedDay]) {
-                                  isSelected = time >= classStartTime &&
+                                  isSelected = time > classStartTime &&
                                           time <= classEndTime
                                       ? true
                                       : false;
