@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/storage.dart';
@@ -33,6 +35,9 @@ class _HomeState extends State<Home> {
     selectedDay = 0;
     storage = Provider.of<Storage>(context, listen: false);
     schedule = storage.getTimeTable();
+    Timer.periodic(Duration(minutes: 1), (timer) {
+      setState(() {});
+    });
   }
 
   @override
@@ -163,6 +168,7 @@ class _HomeState extends State<Home> {
                                     daysOrderedList[selectedDay]]![index][1];
                                 int time = DateTime.now().hour * 60 +
                                     DateTime.now().minute;
+                                print(time);
                                 int classStartTime =
                                     int.parse(classTime.substring(0, 2)) * 60 +
                                         int.parse(classTime.substring(3, 5));
@@ -171,7 +177,7 @@ class _HomeState extends State<Home> {
                                             60 +
                                         int.parse(classTime.substring(13));
                                 bool isSelected;
-                                if (days[DateTime.now().weekday] ==
+                                if (days[DateTime.now().weekday - 1] ==
                                     daysOrderedList[selectedDay]) {
                                   isSelected = time >= classStartTime &&
                                           time <= classEndTime
