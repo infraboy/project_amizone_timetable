@@ -168,7 +168,6 @@ class _HomeState extends State<Home> {
                                     daysOrderedList[selectedDay]]![index][1];
                                 int time = DateTime.now().hour * 60 +
                                     DateTime.now().minute;
-                                print(time);
                                 int classStartTime =
                                     int.parse(classTime.substring(0, 2)) * 60 +
                                         int.parse(classTime.substring(3, 5));
