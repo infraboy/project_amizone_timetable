@@ -17,20 +17,13 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   late final Storage storage;
   String? error;
-  // late final Timer timer;
+  late final Timer timer;
   late wv.InAppWebViewController _controller;
 
   @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
-    //TODO implement timer
-    // timer = Timer(Duration(minutes: 1), () {
-    //           storage.error =
-    //               "Timeout, ScAmizone took more time than expected😭, some error might've occurred!";
-    //           storage.setLoginStatus(false);
-    //         });
-    //TODO show different error if logged in and could not reload
     WidgetsBinding.instance!.addPostFrameCallback(
       (timeStamp) => Navigator.push(
         context,
@@ -72,6 +65,21 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   Widget _login() {
+    timer = Timer(Duration(minutes: 1), () {
+      storage.setLoadingStatus(false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Amizone took more time than expected, plz try again after some time."),
+          action: SnackBarAction(
+            label: "OK",
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    });
     return Scaffold(
       body: Visibility(
         maintainState: true,
@@ -155,26 +163,24 @@ class _LoadingPageState extends State<LoadingPage> {
       storage.setTimeTable(timeTable);
       if (!storage.getLoginStatus()) storage.setLoginStatus(true);
       storage.setLoadingStatus(false);
-      // timer.cancel();
+      timer.cancel();
     }
     try {
       String validate = await _controller.evaluateJavascript(
           source:
               """document.querySelector("#loginform > div.text-danger").textContent""");
       if (validate.isNotEmpty) {
-        // timer.cancel();
+        timer.cancel();
         storage.setLoadingStatus(false);
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Error Logging In"),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(validate),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
-              )
-            ],
+            action: SnackBarAction(
+              label: "OK",
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
           ),
         );
         storage.setLoadingStatus(false);
