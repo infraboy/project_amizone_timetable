@@ -161,7 +161,8 @@ class _HomeState extends State<Home> {
                               ),
                             )
                           : ListView.builder(
-                              padding: EdgeInsets.all(20),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 20, horizontal: 15),
                               itemCount:
                                   schedule[daysOrderedList[(selectedDay)]]!
                                       .length,
