@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as wv;
-import 'package:project_amizone_timetable/home.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:flutter/material.dart';
+import 'package:project_amizone_timetable/landing_page.dart';
 import 'package:project_amizone_timetable/services/storage.dart';
 import 'package:provider/provider.dart';
+import 'package:html/dom.dart' as dom;
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({Key? key}) : super(key: key);
@@ -15,20 +15,25 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  late wv.InAppWebViewController _controller;
   late final Storage storage;
   String? error;
-  late final Timer timer;
+  late Timer timer;
+  late wv.InAppWebViewController _controller;
 
   @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
-    timer = Timer(Duration(minutes: 2), () {
-      storage.error =
-          "Timeout, ScAmizone took more time than expected😭, some error might've occurred!";
-      storage.setLoginStatus(false);
-    });
+    WidgetsBinding.instance!.addPostFrameCallback(
+      (timeStamp) => Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              LandingPage(),
+          transitionDuration: Duration(seconds: 0),
+        ),
+      ),
+    );
   }
 
   @override
@@ -38,28 +43,54 @@ class _LoadingPageState extends State<LoadingPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!) {
-            if (storage.tryLogin) {
-              storage.tryLogin = false;
-              return Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _children(),
-                  ),
-                ),
-              );
-            }
+            return StreamBuilder<bool>(
+              initialData: storage.getLoginStatus() ? true : false,
+              stream: storage.isLoading,
+              builder: (context, snapshot) {
+                if (snapshot.data!) {
+                  return _login();
+                } else {
+                  return Container();
+                }
+              },
+            );
+          } else {
+            storage.isOnline = false;
+            storage.setLoadingStatus(false);
           }
-          timer.cancel();
-          return Home();
         }
-        timer.cancel();
-        return Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return Container();
       },
+    );
+  }
+
+  Widget _login() {
+    timer = Timer(Duration(minutes: 1), () {
+      storage.setLoadingStatus(false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Amizone took more time than expected, plz try again after some time."),
+          action: SnackBarAction(
+            label: "OK",
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    });
+    return Scaffold(
+      body: wv.InAppWebView(
+        initialUrlRequest:
+            wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
+        onWebViewCreated: (wv.InAppWebViewController controller) {
+          _controller = controller;
+        },
+        onLoadStop: (controller, url) async {
+          await readJS();
+        },
+      ),
     );
   }
 
@@ -74,34 +105,6 @@ class _LoadingPageState extends State<LoadingPage> {
     } on SocketException catch (_) {
       return false;
     }
-  }
-
-  List<Widget> _children() {
-    return [
-      Expanded(
-        flex: 2000,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      Expanded(
-        flex: 1,
-        child: Visibility(
-          maintainState: true,
-          visible: false,
-          child: wv.InAppWebView(
-            initialUrlRequest:
-                wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
-            onWebViewCreated: (wv.InAppWebViewController controller) {
-              _controller = controller;
-            },
-            onLoadStop: (controller, url) async {
-              await readJS();
-            },
-          ),
-        ),
-      ),
-    ];
   }
 
   Future<void> readJS() async {
@@ -154,19 +157,29 @@ class _LoadingPageState extends State<LoadingPage> {
         } catch (e) {}
       }
       storage.setTimeTable(timeTable);
+      if (!storage.getLoginStatus()) storage.setLoginStatus(true);
+      storage.setLoadingStatus(false);
       timer.cancel();
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Home(),
-      ));
     }
     try {
       String validate = await _controller.evaluateJavascript(
           source:
               """document.querySelector("#loginform > div.text-danger").textContent""");
-      if (validate == "Please check your credential !!") {
-        storage.error = "Please check your credential !!";
+      if (validate.isNotEmpty) {
         timer.cancel();
-        storage.setLoginStatus(false);
+        storage.setLoadingStatus(false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(validate),
+            action: SnackBarAction(
+              label: "OK",
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+        storage.setLoadingStatus(false);
       }
     } catch (e) {
       print(e.toString());
