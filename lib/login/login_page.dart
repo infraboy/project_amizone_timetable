@@ -34,107 +34,114 @@ class _LoginPageState extends State<LoginPage> {
           return WillPopScope(
             onWillPop: () async => false,
             child: Scaffold(
+              backgroundColor: Colors.grey[200],
               body: Center(
-                child: ListView(
-                  padding: EdgeInsets.all(20),
-                  shrinkWrap: true,
-                  children: [
-                    if (snapshot.data!)
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      )
-                    else
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          child: Image.asset("images/scamity.png"),
-                        ),
-                      ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextField(
-                      controller: _formNumberController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.blue[900]!,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.yellow[700]!,
-                          ),
-                        ),
-                        labelText: "Form Number",
-                      ),
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      onEditingComplete: () {
-                        _passwordFocus.requestFocus();
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextField(
-                      focusNode: _passwordFocus,
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            width: 2,
-                            color: Colors.blue[900]!,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            width: 4,
-                            color: Colors.yellow[700]!,
-                          ),
-                        ),
-                        labelText: "Password",
-                      ),
-                      obscureText: true,
-                      textInputAction: TextInputAction.done,
-                      onEditingComplete: () {
-                        _passwordFocus.unfocus();
-                        submit();
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(
-                              fontSize: 18,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  margin: EdgeInsets.all(20),
+                  child: ListView(
+                    padding: EdgeInsets.all(20),
+                    shrinkWrap: true,
+                    children: [
+                      if (snapshot.data!)
+                        Center(
+                          child: SizedBox(
+                            height: 150,
+                            width: 150,
+                            child: Center(
+                              child: CircularProgressIndicator(),
                             ),
                           ),
+                        )
+                      else
+                        Center(
+                          child: SizedBox(
+                            height: 150,
+                            child: Image.asset("images/scamity.png"),
+                          ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue[900],
-                        ),
-                        onPressed: snapshot.data! ? null : submit,
+                      SizedBox(
+                        height: 20,
                       ),
-                    ),
-                  ],
+                      TextField(
+                        controller: _formNumberController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.blue[900]!,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.yellow[700]!,
+                            ),
+                          ),
+                          labelText: "Form Number",
+                        ),
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        onEditingComplete: () {
+                          _passwordFocus.requestFocus();
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                        focusNode: _passwordFocus,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.blue[900]!,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              width: 4,
+                              color: Colors.yellow[700]!,
+                            ),
+                          ),
+                          labelText: "Password",
+                        ),
+                        obscureText: true,
+                        textInputAction: TextInputAction.done,
+                        onEditingComplete: () {
+                          _passwordFocus.unfocus();
+                          submit();
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue[900],
+                          ),
+                          onPressed: snapshot.data! ? null : submit,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
