@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:project_amizone_timetable/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'services/storage.dart';
 
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
   late final List<String> daysOrderedList;
   late final Storage storage;
   late final Map<String, List<List<String>>> schedule;
+  late final NotificationService notificationService;
 
   @override
   void initState() {
@@ -38,6 +40,8 @@ class _HomeState extends State<Home> {
     Timer.periodic(Duration(minutes: 1), (timer) {
       setState(() {});
     });
+    notificationService = NotificationService();
+    notificationService.init();
   }
 
   @override
@@ -50,6 +54,7 @@ class _HomeState extends State<Home> {
             onWillPop: () async => true,
             child: Scaffold(
                 appBar: AppBar(
+                  elevation: 20,
                   backgroundColor: Colors.blue[900],
                   title: Text("Scam Schedule"),
                   actions: [
@@ -75,67 +80,64 @@ class _HomeState extends State<Home> {
                         }
                       },
                     ),
-                    TextButton(
-                      child: Text(
-                        "Logout",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                    IconButton(
+                      icon: Icon(Icons.logout),
                       onPressed: () async {
                         storage.setLoginStatus(false);
                       },
                     ),
                   ],
                 ),
-                drawer: Theme(
-                  data: Theme.of(context).copyWith(
-                    canvasColor: Colors.blue[900],
-                  ),
-                  child: Drawer(
-                    child: ListView.builder(
-                      itemCount: daysOrderedList.length,
-                      itemBuilder: (context, index) {
-                        bool select = index == selectedDay;
-                        return Column(
-                          children: [
-                            ListTile(
-                              selectedTileColor: Colors.white,
-                              tileColor: Colors.blue[900],
-                              title: Text(
+                drawer: Drawer(
+                  child: ListView.builder(
+                    itemCount: daysOrderedList.length,
+                    itemBuilder: (context, index) {
+                      bool select = index == selectedDay;
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Center(
+                              child: Text(
                                 daysOrderedList[index],
                                 style: TextStyle(
-                                  fontSize: select ? 16 : 14,
+                                  fontSize: select ? 18 : 16,
                                   fontWeight: select
                                       ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color:
-                                      select ? Colors.blue[900] : Colors.white,
+                                      : FontWeight.w600,
+                                  color: select
+                                      ? Colors.yellow[800]
+                                      : Colors.blue[900],
                                 ),
                               ),
-                              selected: select ? true : false,
-                              onTap: () {
-                                setState(() {
-                                  selectedDay = index;
-                                });
-                                Navigator.of(context).pop();
-                              },
                             ),
-                            Divider(
-                              color: Colors.white,
+                            selected: select ? true : false,
+                            onTap: () {
+                              setState(() {
+                                selectedDay = index;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Divider(
+                              color: Colors.blue[900],
                               height: 0,
                               thickness: 2,
                             ),
-                          ],
-                        );
-                      },
-                    ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 body: Column(
                   children: [
                     if (snapshot.hasData && snapshot.data!)
-                      LinearProgressIndicator(),
+                      LinearProgressIndicator(
+                        color: Colors.blue[900],
+                      ),
                     Expanded(
                       child: schedule[daysOrderedList[(selectedDay)]]!.length ==
                               0
@@ -158,6 +160,7 @@ class _HomeState extends State<Home> {
                               ),
                             )
                           : ListView.builder(
+                              padding: EdgeInsets.all(20),
                               itemCount:
                                   schedule[daysOrderedList[(selectedDay)]]!
                                       .length,
@@ -186,9 +189,41 @@ class _HomeState extends State<Home> {
                                 } else {
                                   isSelected = false;
                                 }
-                                return Column(
-                                  children: [
-                                    ListTile(
+                                if (daysOrderedList[selectedDay] ==
+                                    days[DateTime.now().weekday - 1]) {
+                                  int time = DateTime.now().hour * 60 +
+                                      DateTime.now().minute;
+                                  int classStartTime =
+                                      int.parse(classTime.substring(0, 2)) *
+                                              60 +
+                                          int.parse(classTime.substring(3, 5)) -
+                                          5;
+                                  int classEndTime =
+                                      int.parse(classTime.substring(10, 12)) *
+                                              60 +
+                                          int.parse(classTime.substring(13));
+                                  if (time < classStartTime)
+                                    notificationService.addNotification(
+                                        classTime, className);
+                                  else if (time < classEndTime)
+                                    notificationService.addNotification(
+                                        classTime, className, true);
+                                }
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                                  child: Card(
+                                    elevation: 10,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      side: isSelected
+                                          ? BorderSide(
+                                              width: 4.0,
+                                              color: Colors.yellow[700]!,
+                                            )
+                                          : BorderSide.none,
+                                    ),
+                                    child: ListTile(
                                       isThreeLine: true,
                                       leading: Text(
                                         classTime,
@@ -224,18 +259,8 @@ class _HomeState extends State<Home> {
                                           ),
                                         ],
                                       ),
-                                      shape: isSelected
-                                          ? Border.all(
-                                              width: 5,
-                                              color: Colors.yellow[700]!,
-                                            )
-                                          : null,
                                     ),
-                                    Divider(
-                                      height: 0,
-                                      thickness: 2,
-                                    )
-                                  ],
+                                  ),
                                 );
                               },
                             ),

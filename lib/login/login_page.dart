@@ -37,12 +37,13 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Colors.grey[200],
               body: Center(
                 child: Card(
+                  elevation: 20,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                   margin: EdgeInsets.all(20),
                   child: ListView(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                     shrinkWrap: true,
                     children: [
                       if (snapshot.data!)
@@ -51,7 +52,9 @@ class _LoginPageState extends State<LoginPage> {
                             height: 150,
                             width: 150,
                             child: Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                color: Colors.yellow[700],
+                              ),
                             ),
                           ),
                         )
@@ -63,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                       TextField(
                         controller: _formNumberController,
@@ -78,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(
-                              width: 2,
+                              width: 4,
                               color: Colors.yellow[700]!,
                             ),
                           ),
@@ -91,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                       TextField(
                         focusNode: _passwordFocus,
@@ -121,21 +124,23 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                       Center(
                         child: ElevatedButton(
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
+                            padding: const EdgeInsets.all(20.0),
+                            child: Icon(
+                              Icons.login,
+                              color: Colors.black,
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.blue[900],
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all<double>(15),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                                CircleBorder()),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.yellow[700]!),
                           ),
                           onPressed: snapshot.data! ? null : submit,
                         ),
