@@ -17,7 +17,7 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   late final Storage storage;
   String? error;
-  late final Timer timer;
+  late Timer timer;
   late wv.InAppWebViewController _controller;
 
   @override
@@ -81,19 +81,15 @@ class _LoadingPageState extends State<LoadingPage> {
       );
     });
     return Scaffold(
-      body: Visibility(
-        maintainState: true,
-        visible: true,
-        child: wv.InAppWebView(
-          initialUrlRequest:
-              wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
-          onWebViewCreated: (wv.InAppWebViewController controller) {
-            _controller = controller;
-          },
-          onLoadStop: (controller, url) async {
-            await readJS();
-          },
-        ),
+      body: wv.InAppWebView(
+        initialUrlRequest:
+            wv.URLRequest(url: Uri.parse("https://s.amizone.net/")),
+        onWebViewCreated: (wv.InAppWebViewController controller) {
+          _controller = controller;
+        },
+        onLoadStop: (controller, url) async {
+          await readJS();
+        },
       ),
     );
   }

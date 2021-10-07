@@ -42,12 +42,34 @@ class _HomeState extends State<Home> {
         stream: storage.isLoading,
         builder: (context, snapshot) {
           return WillPopScope(
-            onWillPop: () async => false,
+            onWillPop: () async => true,
             child: Scaffold(
                 appBar: AppBar(
                   backgroundColor: Colors.blue[900],
                   title: Text("Scam Schedule"),
                   actions: [
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        if (!storage.isOnline) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Your device is currently offline, please turn on your internet connection and restart the app."),
+                              action: SnackBarAction(
+                                label: "OK",
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          storage.setLoadingStatus(true);
+                        }
+                      },
+                    ),
                     TextButton(
                       child: Text(
                         "Logout",
@@ -148,10 +170,16 @@ class _HomeState extends State<Home> {
                                     int.parse(classTime.substring(10, 12)) *
                                             60 +
                                         int.parse(classTime.substring(13));
-                                bool isSelected = time >= classStartTime &&
-                                        time <= classEndTime
-                                    ? true
-                                    : false;
+                                bool isSelected;
+                                if (days[DateTime.now().weekday] ==
+                                    daysOrderedList[selectedDay]) {
+                                  isSelected = time >= classStartTime &&
+                                          time <= classEndTime
+                                      ? true
+                                      : false;
+                                } else {
+                                  isSelected = false;
+                                }
                                 return Column(
                                   children: [
                                     ListTile(
@@ -193,7 +221,7 @@ class _HomeState extends State<Home> {
                                       shape: isSelected
                                           ? Border.all(
                                               width: 5,
-                                              color: Colors.blue[900]!,
+                                              color: Colors.yellow[700]!,
                                             )
                                           : null,
                                     ),

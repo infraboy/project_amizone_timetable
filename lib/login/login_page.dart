@@ -57,11 +57,25 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     TextField(
                       controller: _formNumberController,
                       decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.blue[900]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.yellow[700]!,
+                          ),
+                        ),
                         labelText: "Form Number",
                       ),
                       keyboardType: TextInputType.number,
@@ -71,12 +85,26 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     TextField(
                       focusNode: _passwordFocus,
                       controller: _passwordController,
                       decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.blue[900]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Colors.yellow[700]!,
+                          ),
+                        ),
                         labelText: "Password",
                       ),
                       obscureText: true,
@@ -87,11 +115,19 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     Center(
                       child: ElevatedButton(
-                        child: Text("Submit"),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.blue[900],
                         ),
