@@ -21,6 +21,12 @@ class _LoadingPageState extends State<LoadingPage> {
   late wv.InAppWebViewController _controller;
 
   @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);

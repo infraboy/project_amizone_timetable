@@ -17,6 +17,14 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode _passwordFocus = FocusNode();
 
   @override
+  void dispose() {
+    _formNumberController.dispose();
+    _passwordController.dispose();
+    _passwordFocus.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     storage = Provider.of<Storage>(context, listen: false);
