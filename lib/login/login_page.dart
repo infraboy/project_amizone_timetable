@@ -45,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Colors.grey[200],
               body: Center(
                 child: Card(
+                  shadowColor: Colors.blue,
                   elevation: 20,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -149,6 +150,8 @@ class _LoginPageState extends State<LoginPage> {
                                 CircleBorder()),
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Colors.yellow[700]!),
+                            shadowColor: MaterialStateProperty.all<Color>(
+                                Colors.yellowAccent),
                           ),
                           onPressed: snapshot.data! ? null : submit,
                         ),

@@ -54,8 +54,9 @@ class _HomeState extends State<Home> {
             onWillPop: () async => true,
             child: Scaffold(
                 appBar: AppBar(
-                  elevation: 20,
+                  elevation: 10,
                   backgroundColor: Colors.blue[900],
+                  shadowColor: Colors.blue,
                   title: Text("Scam Schedule"),
                   actions: [
                     IconButton(
@@ -214,6 +215,8 @@ class _HomeState extends State<Home> {
                                       const EdgeInsets.fromLTRB(0, 0, 0, 15),
                                   child: Card(
                                     elevation: 10,
+                                    shadowColor:
+                                        isSelected ? Colors.yellowAccent : null,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                       side: isSelected
