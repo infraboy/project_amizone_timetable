@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
   int selectedDay = DateTime.now().weekday - 1;
   late final List<String> daysOrderedList;
   late final Storage storage;
-  late final Map<String, List<List<String>>> schedule;
+  late Map<String, List<List<String>>> schedule;
   late final NotificationService notificationService;
 
   @override
@@ -36,10 +36,6 @@ class _HomeState extends State<Home> {
         days.sublist(selectedDay, days.length) + days.sublist(0, selectedDay);
     selectedDay = 0;
     storage = Provider.of<Storage>(context, listen: false);
-    schedule = storage.getTimeTable();
-    Timer.periodic(Duration(minutes: 1), (timer) {
-      setState(() {});
-    });
     notificationService = NotificationService();
     notificationService.init();
   }
@@ -50,6 +46,7 @@ class _HomeState extends State<Home> {
         initialData: storage.loading ?? true,
         stream: storage.isLoading,
         builder: (context, snapshot) {
+          schedule = storage.getTimeTable();
           return WillPopScope(
             onWillPop: () async => true,
             child: Scaffold(
