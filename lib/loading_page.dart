@@ -172,7 +172,7 @@ class _LoadingPageState extends State<LoadingPage> {
               }
             }
             timeTable[element.id]!.insert(
-                pos, "13:50  to 02:45####DTT####Dhritiman Mukherjee####402");
+                pos, "13:50  to 14:45####DTT####Dhritiman Mukherjee####402");
           }
         } catch (e) {}
       }

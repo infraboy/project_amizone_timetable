@@ -13,8 +13,8 @@ class _LoginPageState extends State<LoginPage> {
   late TextEditingController _formNumberController;
   late TextEditingController _passwordController;
   late final Storage storage;
-
   FocusNode _passwordFocus = FocusNode();
+  bool obscure = true;
 
   @override
   void dispose() {
@@ -105,32 +105,47 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 30,
                       ),
-                      TextField(
-                        focusNode: _passwordFocus,
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              width: 2,
-                              color: Colors.blue[900]!,
+                      Stack(
+                        alignment: Alignment.centerRight,
+                        children: [
+                          TextField(
+                            focusNode: _passwordFocus,
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  width: 2,
+                                  color: Colors.blue[900]!,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  width: 4,
+                                  color: Colors.yellow[700]!,
+                                ),
+                              ),
+                              labelText: "Password",
                             ),
+                            obscureText: obscure,
+                            textInputAction: TextInputAction.done,
+                            onEditingComplete: () {
+                              _passwordFocus.unfocus();
+                              submit();
+                            },
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              width: 4,
-                              color: Colors.yellow[700]!,
-                            ),
+                          IconButton(
+                            icon: obscure
+                                ? Icon(Icons.remove_red_eye_outlined)
+                                : Icon(Icons.remove_red_eye),
+                            onPressed: () {
+                              setState(() {
+                                obscure = !obscure;
+                              });
+                            },
                           ),
-                          labelText: "Password",
-                        ),
-                        obscureText: true,
-                        textInputAction: TextInputAction.done,
-                        onEditingComplete: () {
-                          _passwordFocus.unfocus();
-                          submit();
-                        },
+                        ],
                       ),
                       SizedBox(
                         height: 30,
