@@ -23,6 +23,8 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   void dispose() {
     timer.cancel();
+    _controller.clearCache();
+    _controller.reload();
     super.dispose();
   }
 
@@ -159,6 +161,18 @@ class _LoadingPageState extends State<LoadingPage> {
               period[i] = period[i].trim();
             }
             timeTable[element.id]!.add(period.sublist(1, n - 1).join("####"));
+          }
+          if (element.id == "Monday" ||
+              element.id == "Thursday" ||
+              element.id == "Friday") {
+            int pos = 0;
+            for (int i = 0; i < timeTable[element.id]!.length; i++) {
+              if (int.parse(timeTable[element.id]![i].substring(0, 2)) < 13) {
+                pos = i + 1;
+              }
+            }
+            timeTable[element.id]!.insert(
+                pos, "13:50  to 02:45####DTT####Dhritiman Mukherjee####402");
           }
         } catch (e) {}
       }
